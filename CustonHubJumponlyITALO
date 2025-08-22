@@ -1,0 +1,282 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local touchGui = playerGui:WaitForChild("TouchGui")
+local touchControlFrame = touchGui:WaitForChild("TouchControlFrame")
+local jumpButton = touchControlFrame:WaitForChild("JumpButton") :: GuiObject
+
+-- =======================================
+-- Cria Hub
+-- =======================================
+local hub = Instance.new("ScreenGui")
+hub.Name = "JumpHUD_Hub"
+hub.ResetOnSpawn = false
+hub.IgnoreGuiInset = true
+hub.Parent = playerGui
+
+local panel = Instance.new("Frame")
+panel.Name = "Panel"
+panel.Size = UDim2.new(0, 260, 0, 180)
+panel.Position = UDim2.new(0, 12, 0, 12)
+panel.BackgroundColor3 = Color3.fromRGB(28,28,28)
+panel.BorderSizePixel = 0
+panel.Active = true
+panel.Parent = hub
+Instance.new("UICorner", panel).CornerRadius = UDim.new(0,12)
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1,-40,0,30) -- espaço para o X
+title.Position = UDim2.new(0,12,0,6)
+title.BackgroundTransparency = 1
+title.Text = "Editor do Botão de Pular"
+title.TextSize = 16
+title.Font = Enum.Font.GothamSemibold
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = panel
+
+-- Botão fechar
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,24,0,24)
+closeBtn.Position = UDim2.new(1,-30,0,3)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 18
+closeBtn.TextColor3 = Color3.fromRGB(255,0,0)
+closeBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+closeBtn.Parent = panel
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0,6)
+
+closeBtn.MouseButton1Click:Connect(function()
+    hub.Enabled = false
+end)
+
+-- =======================================
+-- Botões principais
+-- =======================================
+local editBtn = Instance.new("TextButton")
+editBtn.Size = UDim2.new(0.48,0,0,34)
+editBtn.Position = UDim2.new(0.04,0,0,46)
+editBtn.Text = "Editar HUD: OFF"
+editBtn.BackgroundColor3 = Color3.fromRGB(45,130,235)
+editBtn.TextColor3 = Color3.fromRGB(255,255,255)
+editBtn.Font = Enum.Font.GothamMedium
+editBtn.TextSize = 14
+editBtn.AutoButtonColor = true
+editBtn.Parent = panel
+Instance.new("UICorner", editBtn).CornerRadius = UDim.new(0,10)
+
+local resetBtn = Instance.new("TextButton")
+resetBtn.Size = UDim2.new(0.42,0,0,34)
+resetBtn.Position = UDim2.new(0.54,0,0,46)
+resetBtn.Text = "Resetar"
+resetBtn.BackgroundColor3 = Color3.fromRGB(235,80,80)
+resetBtn.TextColor3 = Color3.fromRGB(255,255,255)
+resetBtn.Font = Enum.Font.GothamMedium
+resetBtn.TextSize = 14
+resetBtn.AutoButtonColor = true
+resetBtn.Parent = panel
+Instance.new("UICorner", resetBtn).CornerRadius = UDim.new(0,10)
+
+local sep = Instance.new("Frame")
+sep.BackgroundColor3 = Color3.fromRGB(50,50,50)
+sep.BorderSizePixel = 0
+sep.Size = UDim2.new(1,-24,0,1)
+sep.Position = UDim2.new(0,12,0,88)
+sep.Parent = panel
+
+local minusBtn = Instance.new("TextButton")
+minusBtn.Size = UDim2.new(0,38,0,34)
+minusBtn.Position = UDim2.new(0.04,0,0,98)
+minusBtn.Text = "−"
+minusBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+minusBtn.TextColor3 = Color3.fromRGB(255,255,255)
+minusBtn.Font = Enum.Font.GothamSemibold
+minusBtn.TextSize = 20
+minusBtn.Parent = panel
+Instance.new("UICorner", minusBtn).CornerRadius = UDim.new(0,10)
+
+local sizeLbl = Instance.new("TextLabel")
+sizeLbl.Size = UDim2.new(0,120,0,34)
+sizeLbl.Position = UDim2.new(0.22,0,0,98)
+sizeLbl.BackgroundTransparency = 1
+sizeLbl.Text = "Tamanho: 120"
+sizeLbl.TextSize = 14
+sizeLbl.Font = Enum.Font.Gotham
+sizeLbl.TextColor3 = Color3.fromRGB(230,230,230)
+sizeLbl.Parent = panel
+
+local plusBtn = Instance.new("TextButton")
+plusBtn.Size = UDim2.new(0,38,0,34)
+plusBtn.Position = UDim2.new(0.72,0,0,98)
+plusBtn.Text = "+"
+plusBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+plusBtn.TextColor3 = Color3.fromRGB(255,255,255)
+plusBtn.Font = Enum.Font.GothamSemibold
+plusBtn.TextSize = 20
+plusBtn.Parent = panel
+Instance.new("UICorner", plusBtn).CornerRadius = UDim.new(0,10)
+
+-- =======================================
+-- Funções de tamanho
+-- =======================================
+local function refreshSizeLabel()
+    sizeLbl.Text = ("Tamanho: %d"):format(jumpButton.Size.X.Offset)
+end
+
+local function setSquareSize(px)
+    px = math.clamp(px,60,220)
+    jumpButton.Size = UDim2.new(0,px,0,px)
+    jumpButton:SetAttribute("Size", px)
+    refreshSizeLabel()
+end
+
+minusBtn.MouseButton1Click:Connect(function()
+    setSquareSize(jumpButton.Size.X.Offset - 10)
+end)
+plusBtn.MouseButton1Click:Connect(function()
+    setSquareSize(jumpButton.Size.X.Offset + 10)
+end)
+
+resetBtn.MouseButton1Click:Connect(function()
+    jumpButton.AnchorPoint = Vector2.new(0.5,0.5)
+    jumpButton.Position = UDim2.new(0.85,0,0.80,0)
+    setSquareSize(120)
+    panel.Position = UDim2.new(0,12,0,12)
+end)
+
+-- =======================================
+-- JumpButton arrastável
+-- =======================================
+local editing = false
+local shield = Instance.new("Frame")
+shield.Size = UDim2.fromScale(1,1)
+shield.Position = UDim2.fromScale(0,0)
+shield.BackgroundTransparency = 1
+shield.Active = true
+shield.Visible = false
+shield.ZIndex = 10
+shield.Parent = jumpButton
+
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(80,170,255)
+stroke.Enabled = false
+stroke.Parent = jumpButton
+
+local dragging = false
+local dragInput
+local dragStart
+local startCenter
+
+local function beginDrag(input)
+    dragging = true
+    dragInput = input
+    dragStart = Vector2.new(input.Position.X,input.Position.Y)
+    startCenter = Vector2.new(jumpButton.AbsolutePosition.X + jumpButton.AbsoluteSize.X/2, jumpButton.AbsolutePosition.Y + jumpButton.AbsoluteSize.Y/2)
+end
+
+local function updateDrag(input)
+    if not dragging then return end
+    local current = Vector2.new(input.Position.X,input.Position.Y)
+    local delta = current - dragStart
+    local parentSize = jumpButton.Parent.AbsoluteSize
+    local newCenter = startCenter + delta
+    local xScale = math.clamp(newCenter.X / parentSize.X, 0, 1)
+    local yScale = math.clamp(newCenter.Y / parentSize.Y, 0, 1)
+    jumpButton.AnchorPoint = Vector2.new(0.5,0.5)
+    jumpButton.Position = UDim2.fromScale(xScale,yScale)
+    jumpButton:SetAttribute("PositionX", xScale)
+    jumpButton:SetAttribute("PositionY", yScale)
+end
+
+local function endDrag()
+    dragging = false
+    dragInput = nil
+end
+
+shield.InputBegan:Connect(function(input)
+    if not editing then return end
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        beginDrag(input)
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                endDrag()
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if not editing then return end
+    if input == dragInput or input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+        updateDrag(input)
+    end
+end)
+
+editBtn.MouseButton1Click:Connect(function()
+    editing = not editing
+    shield.Visible = editing
+    stroke.Enabled = editing
+    editBtn.Text = editing and "Editar HUD: ON" or "Editar HUD: OFF"
+end)
+
+-- =======================================
+-- Hub arrastável
+-- =======================================
+local panelDragging = false
+local panelDragInput
+local panelDragStart
+local panelStartPos
+
+local function beginPanelDrag(input)
+    panelDragging = true
+    panelDragInput = input
+    panelDragStart = Vector2.new(input.Position.X,input.Position.Y)
+    panelStartPos = panel.Position
+end
+
+local function updatePanelDrag(input)
+    if not panelDragging then return end
+    local delta = Vector2.new(input.Position.X,input.Position.Y) - panelDragStart
+    panel.Position = UDim2.new(0, panelStartPos.X.Offset + delta.X, 0, panelStartPos.Y.Offset + delta.Y)
+    panel:SetAttribute("PosX", panel.Position.X.Offset)
+    panel:SetAttribute("PosY", panel.Position.Y.Offset)
+end
+
+local function endPanelDrag()
+    panelDragging = false
+    panelDragInput = nil
+end
+
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        beginPanelDrag(input)
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                endPanelDrag()
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == panelDragInput or input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+        updatePanelDrag(input)
+    end
+end)
+
+-- =======================================
+-- Restauração de atributos salvos
+-- =======================================
+if jumpButton:GetAttribute("PositionX") then
+    jumpButton.Position = UDim2.fromScale(jumpButton:GetAttribute("PositionX"), jumpButton:GetAttribute("PositionY"))
+end
+if jumpButton:GetAttribute("Size") then
+    setSquareSize(jumpButton:GetAttribute("Size"))
+end
+if panel:GetAttribute("PosX") then
+    panel.Position = UDim2.new(0,panel:GetAttribute("PosX"),0,panel:GetAttribute("PosY"))
+end
