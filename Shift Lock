@@ -33,7 +33,7 @@ ShiftLockButton.BackgroundTransparency = 1
 -- ✅ ÚNICA MODIFICAÇÃO: canto inferior direito
 ShiftLockButton.Position = UDim2.new(0.92, 0, 0.87, 0)
 
-ShiftLockButton.Size = UDim2.new(0.5, 0, 0.5, 0)
+ShiftLockButton.Size = UDim2.new(0.05, 0, 0.05, 0)
 ShiftLockButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
 ShiftLockButton.Image = States.Off
 
