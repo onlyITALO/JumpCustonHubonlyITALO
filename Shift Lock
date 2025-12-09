@@ -1,4 +1,4 @@
---  Remade by Roblue
+-- Remade by Roblue
 local ShiftLockScreenGui = Instance.new("ScreenGui")
 local ShiftLockButton = Instance.new("ImageButton")
 local ShiftlockCursor = Instance.new("ImageLabel")
